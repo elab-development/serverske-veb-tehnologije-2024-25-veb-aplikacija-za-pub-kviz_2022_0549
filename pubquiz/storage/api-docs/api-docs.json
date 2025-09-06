@@ -1,0 +1,2135 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Your API",
+        "description": "API documentation for Pub Quiz application.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/api/events": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "List events with search, filters, sort, pagination",
+                "operationId": "7058ab7c89d20c752b6afd6d808f6526",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search by title or location",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "season_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by one or more statuses (repeat the param).",
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "scheduled",
+                                    "completed",
+                                    "cancelled"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "upcoming",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "starts_at",
+                                "title",
+                                "created_at",
+                                "status"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_dir",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "events": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 10
+                                                    },
+                                                    "season_id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Belgrade Pub Quiz #1"
+                                                    },
+                                                    "location": {
+                                                        "type": "string",
+                                                        "example": "Knez Mihailova 5"
+                                                    },
+                                                    "starts_at": {
+                                                        "type": "string",
+                                                        "example": "2025-03-10T19:00:00"
+                                                    },
+                                                    "ends_at": {
+                                                        "type": "string",
+                                                        "example": "2025-03-10T21:00:00",
+                                                        "nullable": true
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "scheduled"
+                                                    },
+                                                    "scores_finalized": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    },
+                                                    "season": {
+                                                        "description": "Present when the relation is loaded",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Season 2025"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "season-2025"
+                                                            },
+                                                            "start_date": {
+                                                                "type": "string",
+                                                                "example": "2025-01-15"
+                                                            },
+                                                            "end_date": {
+                                                                "type": "string",
+                                                                "example": "2025-06-15"
+                                                            },
+                                                            "is_active": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Spring/Summer season."
+                                                            }
+                                                        },
+                                                        "type": "object",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No events found."
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Create an event (admin only)",
+                "operationId": "508895e03d7f10edac84357084c87b20",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "season_id",
+                                    "title",
+                                    "starts_at"
+                                ],
+                                "properties": {
+                                    "season_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Belgrade Pub Quiz #2"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Skadarlija 12"
+                                    },
+                                    "starts_at": {
+                                        "type": "string",
+                                        "example": "2025-04-05T19:00:00"
+                                    },
+                                    "ends_at": {
+                                        "type": "string",
+                                        "example": "2025-04-05T21:00:00",
+                                        "nullable": true
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "scheduled",
+                                            "completed",
+                                            "cancelled"
+                                        ],
+                                        "example": "scheduled"
+                                    },
+                                    "scores_finalized": {
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Event created successfully"
+                                        },
+                                        "event": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 11
+                                                },
+                                                "season_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Belgrade Pub Quiz #2"
+                                                },
+                                                "location": {
+                                                    "type": "string",
+                                                    "example": "Skadarlija 12"
+                                                },
+                                                "starts_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-05T19:00:00"
+                                                },
+                                                "ends_at": {
+                                                    "type": "string",
+                                                    "example": "2025-04-05T21:00:00",
+                                                    "nullable": true
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "scheduled"
+                                                },
+                                                "scores_finalized": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only admins can create events"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/events/{id}/board": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Leaderboard for a given event (team, points, rank)",
+                "operationId": "52773f3cfec73172068098739a8bcc6e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "board": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "team": {
+                                                        "type": "string",
+                                                        "example": "Quiz Masters"
+                                                    },
+                                                    "points": {
+                                                        "type": "integer",
+                                                        "example": 87
+                                                    },
+                                                    "rank": {
+                                                        "type": "integer",
+                                                        "example": 1,
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No participations found for this event."
+                    }
+                }
+            }
+        },
+        "/api/events/{id}": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get a single event",
+                "operationId": "6f743f71f7a88dbe57be1d9c9ebf47cb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "event": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "season_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Belgrade Pub Quiz #1"
+                                                },
+                                                "location": {
+                                                    "type": "string",
+                                                    "example": "Knez Mihailova 5"
+                                                },
+                                                "starts_at": {
+                                                    "type": "string",
+                                                    "example": "2025-03-10T19:00:00"
+                                                },
+                                                "ends_at": {
+                                                    "type": "string",
+                                                    "example": "2025-03-10T21:00:00",
+                                                    "nullable": true
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "completed"
+                                                },
+                                                "scores_finalized": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "season": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Season 2025"
+                                                        },
+                                                        "slug": {
+                                                            "type": "string",
+                                                            "example": "season-2025"
+                                                        },
+                                                        "start_date": {
+                                                            "type": "string",
+                                                            "example": "2025-01-15"
+                                                        },
+                                                        "end_date": {
+                                                            "type": "string",
+                                                            "example": "2025-06-15"
+                                                        },
+                                                        "is_active": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Spring/Summer season."
+                                                        }
+                                                    },
+                                                    "type": "object",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Update an event (admin only)",
+                "operationId": "fb130dcf1ab4d7abbd3a173741df1f8f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "season_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Belgrade Pub Quiz #1 - Updated"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Terazije 1"
+                                    },
+                                    "starts_at": {
+                                        "type": "string",
+                                        "example": "2025-03-15T19:00:00"
+                                    },
+                                    "ends_at": {
+                                        "type": "string",
+                                        "example": "2025-03-15T21:00:00",
+                                        "nullable": true
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "scheduled",
+                                            "completed",
+                                            "cancelled"
+                                        ],
+                                        "example": "completed"
+                                    },
+                                    "scores_finalized": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Event updated successfully"
+                                        },
+                                        "event": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "season_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Belgrade Pub Quiz #1 - Updated"
+                                                },
+                                                "location": {
+                                                    "type": "string",
+                                                    "example": "Terazije 1"
+                                                },
+                                                "starts_at": {
+                                                    "type": "string",
+                                                    "example": "2025-03-15T19:00:00"
+                                                },
+                                                "ends_at": {
+                                                    "type": "string",
+                                                    "example": "2025-03-15T21:00:00",
+                                                    "nullable": true
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "completed"
+                                                },
+                                                "scores_finalized": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only admins can update events"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Delete an event (admin only)",
+                "operationId": "b8c8f4b41a32532f5e9f7146e511bc61",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Event deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only admins can delete events"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user and get an access token",
+                "operationId": "a39949df013c1eb78ff8bd8f481d408a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Teodora"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "teodora@mail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 8,
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Teodora"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "teodora@mail.com"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "team"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "1|abcdef..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Log in and get an access token",
+                "operationId": "c5e838284c7f343f0e5e5fd589161c96",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "teodora@mail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Teodora logged in"
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "1|abcdef..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Wrong credentials"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Log out (invalidate all tokens for the current user)",
+                "operationId": "399284ae5e84627c95a691127018a412",
+                "responses": {
+                    "200": {
+                        "description": "Logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You have successfully logged out."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/participations": {
+            "get": {
+                "tags": [
+                    "Participations"
+                ],
+                "summary": "List participations (admin: all, team: only own)",
+                "operationId": "ce31e69d3af9f843d9a29e977054d4ec",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "participations": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 42
+                                                    },
+                                                    "event_id": {
+                                                        "type": "integer",
+                                                        "example": 10
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 7
+                                                    },
+                                                    "total_points": {
+                                                        "type": "integer",
+                                                        "example": 86
+                                                    },
+                                                    "rank": {
+                                                        "type": "integer",
+                                                        "example": 1,
+                                                        "nullable": true
+                                                    },
+                                                    "user": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 7
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Quiz Masters"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "team@example.com"
+                                                            },
+                                                            "role": {
+                                                                "type": "string",
+                                                                "example": "team"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "event": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "season_id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Belgrade Pub Quiz #1"
+                                                            },
+                                                            "starts_at": {
+                                                                "type": "string",
+                                                                "example": "2025-03-10T19:00:00"
+                                                            },
+                                                            "ends_at": {
+                                                                "type": "string",
+                                                                "example": "2025-03-10T21:00:00",
+                                                                "nullable": true
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "completed"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "No participations found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Participations"
+                ],
+                "summary": "Create a participation (admin or team). Points and rank start at 0.",
+                "operationId": "cef6aea8e115040162b46bc49b64bfc7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "event_id"
+                                ],
+                                "properties": {
+                                    "event_id": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "user_id": {
+                                        "description": "Optional; only admins may register another user. Teams register themselves.",
+                                        "type": "integer",
+                                        "example": 7
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Participation created successfully"
+                                        },
+                                        "participation": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 55
+                                                },
+                                                "event_id": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 7
+                                                },
+                                                "total_points": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "rank": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 7
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Quiz Masters"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "team@example.com"
+                                                        },
+                                                        "role": {
+                                                            "type": "string",
+                                                            "example": "team"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "event": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "season_id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": "Belgrade Pub Quiz #1"
+                                                        },
+                                                        "starts_at": {
+                                                            "type": "string",
+                                                            "example": "2025-03-10T19:00:00"
+                                                        },
+                                                        "ends_at": {
+                                                            "type": "string",
+                                                            "example": "2025-03-10T21:00:00",
+                                                            "nullable": true
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "scheduled"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "409": {
+                        "description": "Team already registered for this event"
+                    },
+                    "422": {
+                        "description": "Validation error or registration closed"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/participations/{id}": {
+            "get": {
+                "tags": [
+                    "Participations"
+                ],
+                "summary": "Get a single participation (admin: any, team: only own)",
+                "operationId": "ec8f688aa08002241df8ec72f2efec6c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "participation": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 42
+                                                },
+                                                "event_id": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 7
+                                                },
+                                                "total_points": {
+                                                    "type": "integer",
+                                                    "example": 86
+                                                },
+                                                "rank": {
+                                                    "type": "integer",
+                                                    "example": 1,
+                                                    "nullable": true
+                                                },
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 7
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Quiz Masters"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "team@example.com"
+                                                        },
+                                                        "role": {
+                                                            "type": "string",
+                                                            "example": "team"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "event": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "season_id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": "Belgrade Pub Quiz #1"
+                                                        },
+                                                        "starts_at": {
+                                                            "type": "string",
+                                                            "example": "2025-03-10T19:00:00"
+                                                        },
+                                                        "ends_at": {
+                                                            "type": "string",
+                                                            "example": "2025-03-10T21:00:00",
+                                                            "nullable": true
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "completed"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Participations"
+                ],
+                "summary": "Update scores (admin only): total_points, rank",
+                "operationId": "37af8287bd583287e45eaa3dfa768e6f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "total_points": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "example": 92
+                                    },
+                                    "rank": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Participation updated successfully"
+                                        },
+                                        "participation": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 42
+                                                },
+                                                "event_id": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 7
+                                                },
+                                                "total_points": {
+                                                    "type": "integer",
+                                                    "example": 92
+                                                },
+                                                "rank": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 7
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Quiz Masters"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "team@example.com"
+                                                        },
+                                                        "role": {
+                                                            "type": "string",
+                                                            "example": "team"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "event": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "season_id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": "Belgrade Pub Quiz #1"
+                                                        },
+                                                        "starts_at": {
+                                                            "type": "string",
+                                                            "example": "2025-03-10T19:00:00"
+                                                        },
+                                                        "ends_at": {
+                                                            "type": "string",
+                                                            "example": "2025-03-10T21:00:00",
+                                                            "nullable": true
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "completed"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Only admins can update participations"
+                    },
+                    "422": {
+                        "description": "Validation error or no editable fields provided"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Participations"
+                ],
+                "summary": "Delete a participation (admin: any, team: only own)",
+                "operationId": "61e4e6232aa499573e1dde63d109b7f1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Participation deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/seasons": {
+            "get": {
+                "tags": [
+                    "Seasons"
+                ],
+                "summary": "List all seasons",
+                "operationId": "3265d3d787710ae89d8c32fe652c9968",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "seasons": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Season 2025"
+                                                    },
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "season-2025"
+                                                    },
+                                                    "start_date": {
+                                                        "type": "string",
+                                                        "example": "2025-01-15"
+                                                    },
+                                                    "end_date": {
+                                                        "type": "string",
+                                                        "example": "2025-06-15"
+                                                    },
+                                                    "is_active": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Spring/Summer season."
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No seasons found."
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Seasons"
+                ],
+                "summary": "Create a season (admin only)",
+                "operationId": "5535d31c60ce7987e77ee05ddf7731d9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Season 2026"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "season-2026"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "example": "2026-02-01"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "example": "2026-06-01"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Early-year season."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Season created successfully"
+                                        },
+                                        "season": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Season 2026"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "season-2026"
+                                                },
+                                                "start_date": {
+                                                    "type": "string",
+                                                    "example": "2026-02-01"
+                                                },
+                                                "end_date": {
+                                                    "type": "string",
+                                                    "example": "2026-06-01"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Early-year season."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only admins can create seasons"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/seasons/{id}/board": {
+            "get": {
+                "tags": [
+                    "Seasons"
+                ],
+                "summary": "Season TOTAL board and per-event boards",
+                "operationId": "cac4470092141820b3c2e58bc41cae61",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "season": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Season 2025"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "total_board": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "team": {
+                                                        "type": "string",
+                                                        "example": "Quiz Masters"
+                                                    },
+                                                    "points": {
+                                                        "type": "integer",
+                                                        "example": 245
+                                                    },
+                                                    "rank": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "events": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "event": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Belgrade Pub Quiz #1"
+                                                            },
+                                                            "starts_at": {
+                                                                "type": "string",
+                                                                "example": "2025-03-10T19:00:00"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "completed"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "board": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "team": {
+                                                                    "type": "string",
+                                                                    "example": "Quiz Masters"
+                                                                },
+                                                                "points": {
+                                                                    "type": "integer",
+                                                                    "example": 87
+                                                                },
+                                                                "rank": {
+                                                                    "type": "integer",
+                                                                    "example": 1,
+                                                                    "nullable": true
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No events / participations found."
+                    }
+                }
+            }
+        },
+        "/api/seasons/{id}": {
+            "get": {
+                "tags": [
+                    "Seasons"
+                ],
+                "summary": "Get a single season",
+                "operationId": "388ad2b6e891cfc037ff1594ac457a6c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "season": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Season 2025"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "season-2025"
+                                                },
+                                                "start_date": {
+                                                    "type": "string",
+                                                    "example": "2025-01-15"
+                                                },
+                                                "end_date": {
+                                                    "type": "string",
+                                                    "example": "2025-06-15"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Spring/Summer season."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Seasons"
+                ],
+                "summary": "Update a season (admin only)",
+                "operationId": "0b9e3b81c6c1f5ba2ccaa3e4f92896d1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Season 2025 Updated"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "season-2025-updated"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "example": "2025-02-01"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "example": "2025-07-01"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated description."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Season updated successfully"
+                                        },
+                                        "season": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Season 2025 Updated"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "season-2025-updated"
+                                                },
+                                                "start_date": {
+                                                    "type": "string",
+                                                    "example": "2025-02-01"
+                                                },
+                                                "end_date": {
+                                                    "type": "string",
+                                                    "example": "2025-07-01"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Updated description."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only admins can update seasons"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Seasons"
+                ],
+                "summary": "Delete a season (admin only)",
+                "operationId": "9b1fe780f9c198bd2030ed7dd24e9156",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Season deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only admins can delete seasons"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/trivia": {
+            "get": {
+                "tags": [
+                    "Trivia"
+                ],
+                "summary": "Fetch questions from Open Trivia DB (admin only)",
+                "operationId": "3e672b22ec672a44cdc30eee6450db08",
+                "parameters": [
+                    {
+                        "name": "amount",
+                        "in": "query",
+                        "description": "Number of questions (1–50). Default 10.",
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 50,
+                            "minimum": 1
+                        },
+                        "example": 10
+                    },
+                    {
+                        "name": "difficulty",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "easy",
+                                "medium",
+                                "hard"
+                            ]
+                        },
+                        "example": "medium"
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "multiple",
+                                "boolean"
+                            ]
+                        },
+                        "example": "multiple"
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "OpenTDB numeric category id",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "example": 9
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "source": {
+                                            "type": "string",
+                                            "example": "Open Trivia DB"
+                                        },
+                                        "params": {
+                                            "properties": {
+                                                "amount": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "difficulty": {
+                                                    "type": "string",
+                                                    "example": "medium",
+                                                    "nullable": true
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "multiple",
+                                                    "nullable": true
+                                                },
+                                                "category": {
+                                                    "type": "integer",
+                                                    "example": 9,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "count": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "questions": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "uid": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "example": "2b4a1af0-7a4f-4e2a-8c2b-9a7f6b3b2f1d"
+                                                    },
+                                                    "category": {
+                                                        "type": "string",
+                                                        "example": "General Knowledge"
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "multiple"
+                                                    },
+                                                    "difficulty": {
+                                                        "type": "string",
+                                                        "example": "medium"
+                                                    },
+                                                    "question": {
+                                                        "type": "string",
+                                                        "example": "What is the capital of Serbia?"
+                                                    },
+                                                    "answers": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "example": [
+                                                            "Belgrade",
+                                                            "Novi Sad",
+                                                            "Niš",
+                                                            "Kragujevac"
+                                                        ]
+                                                    },
+                                                    "correct": {
+                                                        "type": "string",
+                                                        "example": "Belgrade"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only admins can fetch questions"
+                    },
+                    "404": {
+                        "description": "No questions found from the public API."
+                    },
+                    "502": {
+                        "description": "Public questions API not reachable"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Events",
+            "description": "Manage and view events"
+        },
+        {
+            "name": "Auth",
+            "description": "Registration & authentication"
+        },
+        {
+            "name": "Participations",
+            "description": "Register, view and score participations"
+        },
+        {
+            "name": "Seasons",
+            "description": "Manage and view seasons"
+        },
+        {
+            "name": "Trivia",
+            "description": "Fetch public trivia questions (Open Trivia DB)"
+        }
+    ]
+}
